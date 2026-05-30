@@ -1,0 +1,39 @@
+{
+  "name": "@humaniser/web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@clerk/nextjs": "^6.12.0",
+    "@radix-ui/react-slot": "^1.1.2",
+    "@sentry/nextjs": "^10.55.0",
+    "@types/diff-match-patch": "^1.0.36",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "diff-match-patch": "^1.0.5",
+    "humaniser-platform": "file:../..",
+    "lucide-react": "^0.475.0",
+    "next": "14.2.35",
+    "posthog-js": "^1.376.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwind-merge": "^2.6.0",
+    "tailwindcss-animate": "^1.0.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.1",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "14.2.35",
+    "postcss": "^8.5.1",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.3"
+  }
+}

@@ -1,0 +1,17 @@
+.env
+.env.*
+env.local
+!.env.example
+node_modules/
+.next/
+out/
+dist/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.pyc
+.venv/
+coverage/
+htmlcov/
+.DS_Store
