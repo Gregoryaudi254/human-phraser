@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 
 from app.auth import get_current_user
 from app.database import get_db
+from app.credits import FREE_SIGNUP_WORDS, PRO_MONTHLY_WORDS
 from app.models import Rewrite, User
 
 router = APIRouter()
@@ -84,9 +85,9 @@ def dashboard_stats(
 
     plan_limit = None
     if current_user.plan == "free":
-        plan_limit = 500
+        plan_limit = FREE_SIGNUP_WORDS
     elif current_user.plan == "pro":
-        plan_limit = 15_000
+        plan_limit = PRO_MONTHLY_WORDS
 
     return {
         "total_rewrites_month": total_rewrites,

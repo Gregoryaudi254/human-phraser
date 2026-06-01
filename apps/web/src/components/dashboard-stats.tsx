@@ -7,22 +7,55 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DashboardStats as DashboardStatsType, fetchDashboardStats } from "@/lib/api";
 
 export function DashboardStats() {
-  const { getToken } = useAuth();
+  const { getToken, isLoaded, isSignedIn } = useAuth();
   const [stats, setStats] = useState<DashboardStatsType | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
 
     async function loadStats() {
+      if (!isLoaded) {
+        return;
+      }
+
+      if (!isSignedIn) {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+        return;
+      }
+
       try {
+        setError(null);
         const token = await getToken();
         if (!token) {
+          if (isMounted) {
+            setError("Your session is still starting. Refresh the page in a moment.");
+          }
           return;
         }
-        const result = await fetchDashboardStats(token);
+        let result: DashboardStatsType;
+        try {
+          result = await fetchDashboardStats(token);
+        } catch (err) {
+          if (!(err instanceof Error) || err.message !== "Invalid token") {
+            throw err;
+          }
+
+          const freshToken = await getToken({ skipCache: true });
+          if (!freshToken) {
+            throw err;
+          }
+          result = await fetchDashboardStats(freshToken);
+        }
         if (isMounted) {
           setStats(result);
+        }
+      } catch (err) {
+        if (isMounted) {
+          setError(err instanceof Error ? err.message : "Unable to load dashboard stats");
         }
       } finally {
         if (isMounted) {
@@ -35,13 +68,21 @@ export function DashboardStats() {
     return () => {
       isMounted = false;
     };
-  }, [getToken]);
+  }, [getToken, isLoaded, isSignedIn]);
 
   if (isLoading) {
     return (
       <div className="flex items-center gap-2 border-b bg-card/60 px-4 py-3 text-sm text-muted-foreground lg:px-6">
         <Loader2 className="h-4 w-4 animate-spin" />
         Loading stats...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="border-b bg-amber-50 px-4 py-3 text-sm text-amber-900 lg:px-6">
+        Dashboard stats are unavailable right now: {error}
       </div>
     );
   }

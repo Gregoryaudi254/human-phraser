@@ -62,7 +62,7 @@ function getWordCount(text: string) {
 
 export function EditorShell() {
   const { getToken } = useAuth();
-  const [mode, setMode] = useState<RewriteMode>("standard");
+  const [mode, setMode] = useState<RewriteMode>("light");
   const [draft, setDraft] = useState("");
   const [output, setOutput] = useState("");
   const [score, setScore] = useState<number | null>(null);
@@ -99,14 +99,22 @@ export function EditorShell() {
         throw new Error("Your session is not ready. Please sign in again.");
       }
 
-      const response = await fetch(`${apiUrl}/rewrite`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ text: draft, mode })
-      });
+      let activeToken = token;
+      let response = await postRewrite(activeToken, draft, mode);
+      if (response.status === 401) {
+        const message = await readErrorMessage(response);
+        if (message === "Invalid token") {
+          const freshToken = await getToken({ skipCache: true });
+          if (freshToken) {
+            activeToken = freshToken;
+            response = await postRewrite(activeToken, draft, mode);
+          } else {
+            throw new Error(message);
+          }
+        } else {
+          throw new Error(message);
+        }
+      }
 
       if (!response.ok || !response.body) {
         const message = await readErrorMessage(response);
@@ -120,7 +128,7 @@ export function EditorShell() {
           applyRewriteResult(payload.result);
         } else {
           setProgressMessage("Queued for processing...");
-          await pollRewriteJob(payload.job_id, token, setProgressMessage, applyRewriteResult);
+          await pollRewriteJob(payload.job_id, activeToken, setProgressMessage, applyRewriteResult);
         }
       } else {
         await readRewriteStream(response.body, {
@@ -244,6 +252,17 @@ export function EditorShell() {
       </section>
     </div>
   );
+}
+
+function postRewrite(token: string, text: string, mode: RewriteMode) {
+  return fetch(`${apiUrl}/rewrite`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ text, mode })
+  });
 }
 
 async function readErrorMessage(response: Response) {

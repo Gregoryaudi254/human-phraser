@@ -4,6 +4,7 @@ env.local
 !.env.example
 node_modules/
 .next/
+.next-build/
 out/
 dist/
 __pycache__/

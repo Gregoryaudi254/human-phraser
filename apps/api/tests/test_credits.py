@@ -16,7 +16,7 @@ def test_credit_account_seed_and_deduction() -> None:
     db.refresh(user)
 
     credit = ensure_credit_account(db, user)
-    assert credit.balance_words == 500
+    assert credit.balance_words == 200
 
     updated = deduct_words(db, user, 120)
-    assert updated.balance_words == 380
+    assert updated.balance_words == 80

@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.models import Credit, CreditTransaction, Rewrite, User
 
-FREE_SIGNUP_WORDS = 500
+FREE_SIGNUP_WORDS = 200
 PRO_MONTHLY_WORDS = 15_000
 CREDIT_PACK_WORDS = 5_000
 

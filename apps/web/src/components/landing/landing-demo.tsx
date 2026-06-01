@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Loader2, MoveRight, Sparkles } from "lucide-react";
 import { useMemo, useState } from "react";
+import { DiffView } from "@/components/diff-view";
 import { Button } from "@/components/ui/button";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
@@ -90,9 +91,7 @@ export function LandingDemo({ isSignedIn }: { isSignedIn: boolean }) {
                 <div className="h-4 w-3/4 animate-pulse rounded bg-muted" />
               </div>
             ) : result ? (
-              <div className="flex-1 rounded-lg border bg-background p-4">
-                <p className="whitespace-pre-wrap text-sm leading-7 text-muted-foreground">{result}</p>
-              </div>
+              <DiffView original={text} revised={result} className="max-h-[24rem] flex-1 overflow-y-auto" />
             ) : (
               <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed bg-background p-6 text-center text-sm leading-6 text-muted-foreground">
                 Your improved text will appear here.
@@ -106,7 +105,7 @@ export function LandingDemo({ isSignedIn }: { isSignedIn: boolean }) {
                   <MoveRight className="h-4 w-4" />
                 </Link>
               </Button>
-              <p className="text-sm text-muted-foreground">One free demo per day. Sign up for 500 free words.</p>
+              <p className="text-sm text-muted-foreground">One free demo per day. Sign up for 200 free words.</p>
             </div>
           </div>
         </div>

@@ -6,6 +6,7 @@ from fastapi import APIRouter, HTTPException, Request, status
 from pydantic import BaseModel, Field
 
 from app.cache import get_redis
+from app.credits import FREE_SIGNUP_WORDS
 from app.rewriter import count_words, rewrite_light
 from app.security import sanitize_text
 
@@ -44,7 +45,7 @@ async def demo_rewrite(payload: DemoRewriteRequest, request: Request) -> dict[st
     return {
         "rewritten_text": rewritten,
         "words_used": words_used,
-        "signup_prompt": "Sign up to save this rewrite and get 500 free words.",
+        "signup_prompt": f"Sign up to save this rewrite and get {FREE_SIGNUP_WORDS} free words.",
     }
 
 

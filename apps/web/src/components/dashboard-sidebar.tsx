@@ -1,6 +1,6 @@
 "use client";
 
-import { BarChart3, Clock3, CreditCard, LayoutDashboard } from "lucide-react";
+import { Clock3, CreditCard, LayoutDashboard } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -8,8 +8,7 @@ import { cn } from "@/lib/utils";
 const items = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { label: "History", href: "/history", icon: Clock3 },
-  { label: "Account", href: "/account", icon: CreditCard },
-  { label: "Upgrade", href: "/upgrade", icon: BarChart3 }
+  { label: "Account", href: "/account", icon: CreditCard }
 ];
 
 export function DashboardSidebar() {

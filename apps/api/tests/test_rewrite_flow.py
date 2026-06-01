@@ -27,4 +27,5 @@ def test_rewrite_requires_word_limit(monkeypatch) -> None:
     response = client.post("/rewrite", json={"text": "word " * 5001, "mode": "light"})
 
     assert response.status_code == 422
+    assert response.json()["detail"] == "Rewrite requests are limited to 5,000 words."
     app.dependency_overrides.clear()

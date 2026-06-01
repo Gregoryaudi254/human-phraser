@@ -4,12 +4,11 @@ import { UserButton, useAuth, useUser } from "@clerk/nextjs";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { DashboardSidebar } from "@/components/dashboard-sidebar";
-import { DashboardStats } from "@/components/dashboard-stats";
 import { EditorShell } from "@/components/editor-shell";
 import { CurrentUser, fetchCurrentUser } from "@/lib/api";
 
 export default function DashboardPage() {
-  const { getToken } = useAuth();
+  const { getToken, isLoaded, isSignedIn } = useAuth();
   const { user } = useUser();
   const [profile, setProfile] = useState<CurrentUser | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -19,12 +18,37 @@ export default function DashboardPage() {
     let isMounted = true;
 
     async function loadProfile() {
+      if (!isLoaded) {
+        return;
+      }
+
+      if (!isSignedIn) {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+        return;
+      }
+
       try {
+        setError(null);
         const token = await getToken();
         if (!token) {
-          throw new Error("Missing auth token");
+          throw new Error("Your session is still starting. Refresh the page in a moment.");
         }
-        const currentUser = await fetchCurrentUser(token);
+        let currentUser: CurrentUser;
+        try {
+          currentUser = await fetchCurrentUser(token);
+        } catch (err) {
+          if (!(err instanceof Error) || err.message !== "Invalid token") {
+            throw err;
+          }
+
+          const freshToken = await getToken({ skipCache: true });
+          if (!freshToken) {
+            throw err;
+          }
+          currentUser = await fetchCurrentUser(freshToken);
+        }
         if (isMounted) {
           setProfile(currentUser);
         }
@@ -44,7 +68,7 @@ export default function DashboardPage() {
     return () => {
       isMounted = false;
     };
-  }, [getToken]);
+  }, [getToken, isLoaded, isSignedIn]);
 
   return (
     <main className="min-h-screen">
@@ -79,7 +103,6 @@ export default function DashboardPage() {
       <div className="mx-auto grid max-w-[1280px] md:grid-cols-[220px_1fr]">
         <DashboardSidebar />
         <div>
-          <DashboardStats />
           <EditorShell />
         </div>
       </div>

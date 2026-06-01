@@ -68,6 +68,7 @@ def verify_clerk_jwt(request: Request) -> ClerkClaims:
             signing_key.key,
             algorithms=["RS256"],
             issuer=settings.clerk_issuer,
+            leeway=30,
             options={"verify_aud": False},
         )
     except jwt.PyJWTError as exc:

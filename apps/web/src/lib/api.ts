@@ -43,6 +43,24 @@ export type DashboardStats = {
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
+async function readApiError(response: Response, fallback: string) {
+  const message = await response.text();
+  if (!message) {
+    return fallback;
+  }
+
+  try {
+    const payload = JSON.parse(message) as { detail?: unknown };
+    if (typeof payload.detail === "string") {
+      return payload.detail;
+    }
+  } catch {
+    // Keep the raw response body below.
+  }
+
+  return message;
+}
+
 export async function fetchCurrentUser(token: string): Promise<CurrentUser> {
   const response = await fetch(`${apiUrl}/api/me`, {
     headers: {
@@ -52,8 +70,7 @@ export async function fetchCurrentUser(token: string): Promise<CurrentUser> {
   });
 
   if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || "Unable to load user profile");
+    throw new Error(await readApiError(response, "Unable to load user profile"));
   }
 
   return response.json();
@@ -68,8 +85,7 @@ export async function fetchBillingAccount(token: string): Promise<BillingAccount
   });
 
   if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || "Unable to load billing account");
+    throw new Error(await readApiError(response, "Unable to load billing account"));
   }
 
   return response.json();
@@ -86,8 +102,7 @@ export async function createCheckout(token: string, kind: "pro" | "unlimited" | 
   });
 
   if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || "Unable to create checkout session");
+    throw new Error(await readApiError(response, "Unable to create checkout session"));
   }
 
   const payload = (await response.json()) as { url: string };
@@ -103,8 +118,7 @@ export async function createCustomerPortal(token: string): Promise<string> {
   });
 
   if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || "Unable to create customer portal session");
+    throw new Error(await readApiError(response, "Unable to create customer portal session"));
   }
 
   const payload = (await response.json()) as { url: string };
@@ -120,8 +134,7 @@ export async function fetchRewriteHistory(token: string, page = 1): Promise<Rewr
   });
 
   if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || "Unable to load rewrite history");
+    throw new Error(await readApiError(response, "Unable to load rewrite history"));
   }
 
   return response.json();
@@ -136,8 +149,7 @@ export async function deleteRewrite(token: string, id: number): Promise<void> {
   });
 
   if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || "Unable to delete rewrite");
+    throw new Error(await readApiError(response, "Unable to delete rewrite"));
   }
 }
 
@@ -150,8 +162,7 @@ export async function fetchDashboardStats(token: string): Promise<DashboardStats
   });
 
   if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || "Unable to load dashboard stats");
+    throw new Error(await readApiError(response, "Unable to load dashboard stats"));
   }
 
   return response.json();

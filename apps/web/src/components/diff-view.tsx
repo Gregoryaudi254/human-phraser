@@ -7,11 +7,12 @@ import { cn } from "@/lib/utils";
 type DiffViewProps = {
   original: string;
   revised: string;
+  className?: string;
 };
 
 const dmp = new diff_match_patch();
 
-export function DiffView({ original, revised }: DiffViewProps) {
+export function DiffView({ original, revised, className }: DiffViewProps) {
   const diffs = useMemo(() => {
     const result = dmp.diff_main(original, revised);
     dmp.diff_cleanupSemantic(result);
@@ -19,7 +20,7 @@ export function DiffView({ original, revised }: DiffViewProps) {
   }, [original, revised]);
 
   return (
-    <div className="min-h-[18rem] whitespace-pre-wrap rounded-lg border bg-background p-4 text-sm leading-7">
+    <div className={cn("min-h-[18rem] max-h-[32rem] overflow-y-auto whitespace-pre-wrap rounded-lg border bg-background p-4 text-sm leading-7", className)}>
       {diffs.map(([operation, text], index) => (
         <span
           key={`${operation}-${index}-${text.slice(0, 12)}`}

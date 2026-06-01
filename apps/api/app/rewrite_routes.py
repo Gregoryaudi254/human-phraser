@@ -1,10 +1,8 @@
-from __future__ import annotations
-
 import json
 from collections.abc import AsyncGenerator
 from typing import Any, Literal
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Body, Depends, HTTPException, Request, status
 from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
@@ -76,7 +74,7 @@ def _serialize_result(result: RewriteResult, words_used: int) -> dict[str, Any]:
 @limiter.limit(settings.rewrite_rate_limit)
 async def create_rewrite(
     request: Request,
-    payload: RewriteRequest,
+    payload: RewriteRequest = Body(...),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
