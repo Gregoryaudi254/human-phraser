@@ -41,7 +41,7 @@ export type DashboardStats = {
   plan_limit_words: number | null;
 };
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const apiUrl = getApiUrl();
 
 async function readApiError(response: Response, fallback: string) {
   const message = await response.text();
@@ -167,3 +167,4 @@ export async function fetchDashboardStats(token: string): Promise<DashboardStats
 
   return response.json();
 }
+import { getApiUrl } from "@/lib/api-url";

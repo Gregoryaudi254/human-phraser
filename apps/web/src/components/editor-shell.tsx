@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import { DiffView } from "@/components/diff-view";
 import { NaturalnessScoreBadge } from "@/components/naturalness-score-badge";
 import { Button } from "@/components/ui/button";
+import { getApiUrl } from "@/lib/api-url";
 import { cn } from "@/lib/utils";
 
 type RewriteMode = "light" | "standard" | "deep";
@@ -54,7 +55,7 @@ const modes: Array<{ value: RewriteMode; label: string }> = [
   { value: "deep", label: "Deep" }
 ];
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const apiUrl = getApiUrl();
 
 function getWordCount(text: string) {
   return text.trim().split(/\s+/).filter(Boolean).length;
