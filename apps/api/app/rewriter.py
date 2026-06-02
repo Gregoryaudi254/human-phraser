@@ -329,10 +329,8 @@ async def rewrite_light(text: str) -> str:
 
 async def rewrite_standard(text: str) -> RewriteResult:
     rewritten = await asyncio.to_thread(_call_llm, text, STANDARD_SYSTEM_PROMPT)
-    perplexity, naturalness = await asyncio.gather(
-        asyncio.to_thread(score_perplexity, rewritten),
-        aggregate_naturalness(rewritten),
-    )
+    perplexity = await asyncio.to_thread(score_perplexity, rewritten)
+    naturalness = await _score_naturalness_with_fallback(rewritten, perplexity)
     return RewriteResult(
         text=rewritten,
         score=naturalness.score,
@@ -358,10 +356,8 @@ async def rewrite_deep(
             progress_callback(attempt, max_attempts)
         prompt = _build_deep_attempt_prompt(attempt)
         rewritten = await asyncio.to_thread(_call_llm, current_text, prompt)
-        perplexity, naturalness = await asyncio.gather(
-            asyncio.to_thread(score_perplexity, rewritten),
-            aggregate_naturalness(rewritten),
-        )
+        perplexity = await asyncio.to_thread(score_perplexity, rewritten)
+        naturalness = await _score_naturalness_with_fallback(rewritten, perplexity)
         score = naturalness.score
 
         if score >= best_score:
@@ -388,6 +384,33 @@ async def rewrite_deep(
         perplexity=best_perplexity,
         score_breakdown=best_breakdown,
     )
+
+
+async def _score_naturalness_with_fallback(text: str, perplexity: float) -> "NaturalnessScoreLike":
+    try:
+        return await aggregate_naturalness(text)
+    except (HTTPException, RuntimeError) as exc:
+        logger.info("Using local naturalness fallback: %s", exc)
+        return NaturalnessScoreLike(
+            score=_naturalness_from_perplexity(perplexity),
+            breakdown={"local_perplexity": round(perplexity, 2)},
+        )
+
+
+@dataclass(frozen=True)
+class NaturalnessScoreLike:
+    score: float
+    breakdown: dict[str, float]
+
+
+def _naturalness_from_perplexity(perplexity: float) -> float:
+    if perplexity <= 0:
+        return 0.5
+    if perplexity < 50:
+        return round(0.45 + min(perplexity / 50, 1) * 0.3, 2)
+    if perplexity <= 200:
+        return round(0.75 + ((perplexity - 50) / 150) * 0.15, 2)
+    return round(max(0.65, 0.9 - min((perplexity - 200) / 400, 0.25)), 2)
 
 
 def _build_deep_attempt_prompt(attempt: int) -> str:

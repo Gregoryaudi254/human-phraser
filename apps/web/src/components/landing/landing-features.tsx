@@ -5,8 +5,8 @@ import { cn } from "@/lib/utils";
 const features = [
   {
     icon: PenLine,
-    title: "Three rewrite depths",
-    description: "Light touch-ups, standard editorial passes, or deep rewrites that chase a naturalness score.",
+    title: "AI text humanizer modes",
+    description: "Light polish, Standard rhythm editing, and Deep multi-pass rewriting for more natural, human-like writing.",
     className: "md:col-span-2 md:row-span-2"
   },
   {
@@ -23,8 +23,8 @@ const features = [
   },
   {
     icon: ShieldCheck,
-    title: "Your voice, preserved",
-    description: "Meaning stays intact. We improve how it reads, not what it says.",
+    title: "Meaning and voice preserved",
+    description: "Humaniser improves how the writing reads while preserving facts, intent, and your original message.",
     className: "md:col-span-2"
   },
   {

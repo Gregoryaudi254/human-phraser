@@ -15,6 +15,7 @@ type RewriteMode = "light" | "standard" | "deep";
 type ScoreBreakdown = {
   gptzero?: number;
   originality?: number;
+  local_perplexity?: number;
 };
 
 type RewriteDonePayload = {
@@ -390,7 +391,8 @@ function handleSseEvent(
 function ScoreBreakdownPanel({ breakdown }: { breakdown: ScoreBreakdown }) {
   const rows = [
     { label: "Fluency signal A", value: breakdown.gptzero },
-    { label: "Fluency signal B", value: breakdown.originality }
+    { label: "Fluency signal B", value: breakdown.originality },
+    { label: "Local perplexity signal", value: breakdown.local_perplexity, format: "number" }
   ].filter((row): row is { label: string; value: number } => typeof row.value === "number");
 
   if (rows.length === 0) {
@@ -403,7 +405,7 @@ function ScoreBreakdownPanel({ breakdown }: { breakdown: ScoreBreakdown }) {
         {rows.map((row) => (
           <div key={row.label} className="flex items-center justify-between gap-4 text-sm">
             <span className="text-muted-foreground">{row.label}</span>
-            <span className="font-medium">{Math.round(row.value * 100)}%</span>
+            <span className="font-medium">{row.label === "Local perplexity signal" ? Math.round(row.value) : `${Math.round(row.value * 100)}%`}</span>
           </div>
         ))}
       </div>

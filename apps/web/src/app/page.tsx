@@ -7,6 +7,7 @@ import { LandingHero } from "@/components/landing/landing-hero";
 import { LandingHowItWorks } from "@/components/landing/landing-how-it-works";
 import { LandingNav } from "@/components/landing/landing-nav";
 import { LandingPricing } from "@/components/landing/landing-pricing";
+import { LandingSeoContent } from "@/components/landing/landing-seo-content";
 
 export default async function HomePage() {
   const { userId } = await auth();
@@ -24,6 +25,7 @@ export default async function HomePage() {
         <LandingHero isSignedIn={isSignedIn} />
         <LandingFeatures />
         <LandingHowItWorks />
+        <LandingSeoContent />
         <LandingPricing isSignedIn={isSignedIn} />
       </main>
       <LandingFooter isSignedIn={isSignedIn} />

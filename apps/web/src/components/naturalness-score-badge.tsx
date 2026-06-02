@@ -76,7 +76,7 @@ export function NaturalnessScoreBadge({ score }: NaturalnessScoreBadgeProps) {
           <span className="group relative inline-flex">
             <Info className="h-4 w-4 text-muted-foreground" aria-label="Naturalness score details" />
             <span className="pointer-events-none absolute right-0 top-6 z-10 hidden w-64 rounded-md border bg-card p-3 text-xs leading-5 text-card-foreground shadow-lg group-hover:block">
-              This score reflects how naturally and fluidly the text reads, measured by independent readability APIs.
+              This score reflects how naturally and fluidly the text reads, using external scoring APIs when configured or a local perplexity signal as fallback.
             </span>
           </span>
         </div>

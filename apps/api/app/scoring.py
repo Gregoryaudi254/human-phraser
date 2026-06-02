@@ -57,24 +57,28 @@ async def score_originality(text: str) -> float:
 
 
 async def aggregate_naturalness(text: str) -> NaturalnessScore:
+    scorers = []
+    if settings.gptzero_api_key:
+        scorers.append(("gptzero", score_gptzero(text)))
+    if settings.originality_api_key:
+        scorers.append(("originality", score_originality(text)))
+
+    if not scorers:
+        raise ScoringError("No external naturalness scoring APIs are configured.")
+
     try:
-        gptzero, originality = await asyncio.gather(
-            score_gptzero(text),
-            score_originality(text),
-        )
+        scores = await asyncio.gather(*(scorer for _, scorer in scorers))
     except (ScoringError, httpx.HTTPError, ValueError) as exc:
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
             detail=f"Naturalness scoring failed: {exc}",
         ) from exc
 
-    score = round((gptzero * 0.5) + (originality * 0.5), 2)
+    breakdown = {name: score for (name, _), score in zip(scorers, scores, strict=True)}
+    score = round(sum(scores) / len(scores), 2)
     return NaturalnessScore(
         score=score,
-        breakdown={
-            "gptzero": gptzero,
-            "originality": originality,
-        },
+        breakdown=breakdown,
     )
 
 

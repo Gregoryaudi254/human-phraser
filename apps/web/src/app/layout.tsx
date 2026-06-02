@@ -19,15 +19,23 @@ const sourceSerif = Source_Serif_4({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
   title: {
-    default: "Humaniser - Write like a human",
+    default: "Humaniser - Free AI Humanizer for Natural, Human-Like Writing",
     template: "%s | Humaniser"
   },
   description:
-    "Turn stiff drafts into clear, natural prose. Use Light, Standard, and Deep rewrite modes with diff view and naturalness scoring.",
+    "Humanize AI text from ChatGPT, Gemini, Claude, and other AI tools. Rewrite stiff drafts into natural, human-like writing with diff view, Light, Standard, and Deep modes.",
   applicationName: "Humaniser",
   keywords: [
     "AI writing humanizer",
+    "AI humanizer",
+    "humanize AI text",
+    "free AI humanizer",
+    "ChatGPT humanizer",
+    "Gemini text humanizer",
+    "Claude text humanizer",
+    "AI detector naturalness score",
     "rewrite text naturally",
+    "human-like writing",
     "writing quality tool",
     "naturalness score",
     "AI text editor",
@@ -40,8 +48,8 @@ export const metadata: Metadata = {
     type: "website",
     url: "/",
     siteName: "Humaniser",
-    title: "Humaniser - Write like a human",
-    description: "Rewrite stiff drafts into clear, natural prose with diff view and naturalness scoring.",
+    title: "Humaniser - Free AI Humanizer for Natural Writing",
+    description: "Humanize AI text from ChatGPT, Gemini, and Claude with rewrite modes, diff view, and naturalness scoring.",
     images: [
       {
         url: "/opengraph-image",
@@ -53,8 +61,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Humaniser - Write like a human",
-    description: "Rewrite stiff drafts into clear, natural prose with diff view and naturalness scoring.",
+    title: "Humaniser - Free AI Humanizer",
+    description: "Turn AI-assisted drafts into natural, human-like writing with Light, Standard, and Deep rewrite modes.",
     images: ["/opengraph-image"]
   },
   robots: {

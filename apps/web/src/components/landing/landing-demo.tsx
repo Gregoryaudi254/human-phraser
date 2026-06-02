@@ -53,10 +53,11 @@ export function LandingDemo({ isSignedIn }: { isSignedIn: boolean }) {
         <div className="mb-8 max-w-3xl">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent">Humaniser live demo</p>
           <h1 className="mt-3 font-serif text-4xl font-semibold leading-[1.1] tracking-tight sm:text-5xl lg:text-[3.25rem]">
-            Write like a human. Every time.
+            Humanize AI text into natural, human-like writing.
           </h1>
           <p className="mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">
-            Paste up to 200 words and turn a stiff draft into clearer, more natural prose. No sample text, no credit card.
+            Paste up to 200 words from ChatGPT, Gemini, Claude, or your own draft and turn stiff text into clearer,
+            smoother prose. No signup needed for the demo.
           </p>
         </div>
 
