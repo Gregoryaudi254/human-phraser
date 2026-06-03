@@ -11,7 +11,8 @@ services:
       REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
       FRONTEND_ORIGIN: ${FRONTEND_ORIGIN:-http://localhost:3000}
       ENVIRONMENT: ${ENVIRONMENT:-development}
-      CELERY_WORKER_CONCURRENCY: ${CELERY_WORKER_CONCURRENCY:-2}
+      CELERY_WORKER_CONCURRENCY: ${CELERY_WORKER_CONCURRENCY:-1}
+      ENABLE_PERPLEXITY_SCORING: ${ENABLE_PERPLEXITY_SCORING:-false}
     ports:
       - "8000:8000"
     volumes:
@@ -31,7 +32,7 @@ services:
   worker:
     build:
       context: ./apps/api
-    command: sh -c "celery -A app.celery_app.celery_app worker --loglevel=info --concurrency=${CELERY_WORKER_CONCURRENCY:-2}"
+    command: sh -c "celery -A app.celery_app.celery_app worker --loglevel=info --pool=solo --concurrency=${CELERY_WORKER_CONCURRENCY:-1}"
     env_file:
       - path: .env
         required: false
@@ -40,7 +41,8 @@ services:
       REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
       FRONTEND_ORIGIN: ${FRONTEND_ORIGIN:-http://localhost:3000}
       ENVIRONMENT: ${ENVIRONMENT:-development}
-      CELERY_WORKER_CONCURRENCY: ${CELERY_WORKER_CONCURRENCY:-2}
+      CELERY_WORKER_CONCURRENCY: ${CELERY_WORKER_CONCURRENCY:-1}
+      ENABLE_PERPLEXITY_SCORING: ${ENABLE_PERPLEXITY_SCORING:-false}
     volumes:
       - ./apps/api:/app
     depends_on:

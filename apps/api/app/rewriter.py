@@ -391,6 +391,11 @@ async def _score_naturalness_with_fallback(text: str, perplexity: float) -> "Nat
         return await aggregate_naturalness(text)
     except (HTTPException, RuntimeError) as exc:
         logger.info("Using local naturalness fallback: %s", exc)
+        if not settings.enable_perplexity_scoring or perplexity <= 0:
+            return NaturalnessScoreLike(
+                score=_local_text_naturalness_estimate(text),
+                breakdown={"local_text_signal": _local_text_naturalness_estimate(text)},
+            )
         return NaturalnessScoreLike(
             score=_naturalness_from_perplexity(perplexity),
             breakdown={"local_perplexity": round(perplexity, 2)},
@@ -411,6 +416,29 @@ def _naturalness_from_perplexity(perplexity: float) -> float:
     if perplexity <= 200:
         return round(0.75 + ((perplexity - 50) / 150) * 0.15, 2)
     return round(max(0.65, 0.9 - min((perplexity - 200) / 400, 0.25)), 2)
+
+
+def _local_text_naturalness_estimate(text: str) -> float:
+    words = [word.strip(".,;:!?()[]{}\"'").lower() for word in text.split() if word.strip()]
+    if not words:
+        return 0.5
+
+    sentences = [sentence.strip() for sentence in text.replace("!", ".").replace("?", ".").split(".") if sentence.strip()]
+    sentence_lengths = [len(sentence.split()) for sentence in sentences] or [len(words)]
+    unique_ratio = len(set(words)) / max(len(words), 1)
+    avg_sentence_length = sum(sentence_lengths) / len(sentence_lengths)
+    length_variation = (max(sentence_lengths) - min(sentence_lengths)) / max(avg_sentence_length, 1)
+    contraction_bonus = 0.04 if any("'" in word for word in words) else 0
+    connective_bonus = 0.04 if any(word in {"but", "so", "though", "still", "either", "because"} for word in words) else 0
+
+    score = 0.58
+    score += min(unique_ratio, 0.75) * 0.18
+    score += min(length_variation, 1.5) * 0.08
+    score += contraction_bonus + connective_bonus
+    if avg_sentence_length < 6 or avg_sentence_length > 34:
+        score -= 0.08
+
+    return round(max(0.45, min(score, 0.86)), 2)
 
 
 def _build_deep_attempt_prompt(attempt: int) -> str:
@@ -438,6 +466,9 @@ def _load_gpt2() -> tuple[object, object]:
 
 
 def score_perplexity(text: str) -> float:
+    if not settings.enable_perplexity_scoring:
+        return 0.0
+
     if not text.strip():
         return 0.0
 

@@ -39,7 +39,7 @@ Backend:
 - Railway service should use `apps/api/Dockerfile`.
 - Run one API service and one worker service from the same image.
 - API start command is the Dockerfile default.
-- Worker start command: `celery -A app.celery_app.celery_app worker --loglevel=info --concurrency=${CELERY_WORKER_CONCURRENCY:-2}`
+- Worker start command: `celery -A app.celery_app.celery_app worker --loglevel=info --pool=solo --concurrency=1`
 - Required private variables are listed in `.env.example`.
 
 ## Backups

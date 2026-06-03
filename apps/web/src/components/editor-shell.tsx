@@ -16,6 +16,7 @@ type ScoreBreakdown = {
   gptzero?: number;
   originality?: number;
   local_perplexity?: number;
+  local_text_signal?: number;
 };
 
 type RewriteDonePayload = {
@@ -392,7 +393,8 @@ function ScoreBreakdownPanel({ breakdown }: { breakdown: ScoreBreakdown }) {
   const rows = [
     { label: "Fluency signal A", value: breakdown.gptzero },
     { label: "Fluency signal B", value: breakdown.originality },
-    { label: "Local perplexity signal", value: breakdown.local_perplexity, format: "number" }
+    { label: "Local perplexity signal", value: breakdown.local_perplexity, format: "number" },
+    { label: "Local text signal", value: breakdown.local_text_signal }
   ].filter((row): row is { label: string; value: number } => typeof row.value === "number");
 
   if (rows.length === 0) {

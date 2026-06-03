@@ -38,6 +38,7 @@ class Settings(BaseSettings):
     posthog_api_key: str | None = None
     posthog_host: str = "https://us.i.posthog.com"
     rewrite_rate_limit: str = "10/minute"
+    enable_perplexity_scoring: bool = False
     stripe_secret_key: str | None = None
     stripe_webhook_secret: str | None = None
     stripe_pro_price_id: str | None = None
