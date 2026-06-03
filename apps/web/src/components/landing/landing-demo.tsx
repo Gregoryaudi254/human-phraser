@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Loader2, MoveRight, Sparkles } from "lucide-react";
+import { Check, Copy, Loader2, MoveRight, Sparkles } from "lucide-react";
 import { useMemo, useState } from "react";
 import { DiffView } from "@/components/diff-view";
 import { Button } from "@/components/ui/button";
@@ -22,12 +22,14 @@ export function LandingDemo({ isSignedIn }: { isSignedIn: boolean }) {
   const [result, setResult] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [hasCopied, setHasCopied] = useState(false);
   const words = useMemo(() => wordCount(text), [text]);
 
   async function runDemo() {
     setIsLoading(true);
     setResult("");
     setError(null);
+    setHasCopied(false);
 
     try {
       const response = await fetch(`${apiUrl}/demo/rewrite`, {
@@ -45,6 +47,16 @@ export function LandingDemo({ isSignedIn }: { isSignedIn: boolean }) {
     } finally {
       setIsLoading(false);
     }
+  }
+
+  async function copyResult() {
+    if (!result) {
+      return;
+    }
+
+    await navigator.clipboard.writeText(result);
+    setHasCopied(true);
+    window.setTimeout(() => setHasCopied(false), 1800);
   }
 
   return (
@@ -78,10 +90,24 @@ export function LandingDemo({ isSignedIn }: { isSignedIn: boolean }) {
           <div className="flex min-h-[30rem] flex-col gap-4 rounded-xl border bg-card p-4 shadow-sm">
             <div className="flex items-center justify-between gap-3">
               <span className="font-medium">Improved text</span>
-              <Button className="gap-2" disabled={isLoading || words === 0 || words > 200} onClick={runDemo}>
-                {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-                Improve
-              </Button>
+              <div className="flex items-center gap-2">
+                {result ? (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant={hasCopied ? "default" : "outline"}
+                    className="gap-2 transition-all duration-200"
+                    onClick={copyResult}
+                  >
+                    {hasCopied ? <Check className="h-4 w-4 animate-in zoom-in-50" /> : <Copy className="h-4 w-4" />}
+                    {hasCopied ? "Copied" : "Copy"}
+                  </Button>
+                ) : null}
+                <Button className="gap-2" disabled={isLoading || words === 0 || words > 200} onClick={runDemo}>
+                  {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                  Improve
+                </Button>
+              </div>
             </div>
 
             {error ? <p className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">{error}</p> : null}

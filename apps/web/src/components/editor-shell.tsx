@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuth } from "@clerk/nextjs";
-import { AlertCircle, Check, Loader2, Sparkles } from "lucide-react";
+import { AlertCircle, Check, Copy, Loader2, Sparkles } from "lucide-react";
 import posthog from "posthog-js";
 import { useEffect, useMemo, useState } from "react";
 import { DiffView } from "@/components/diff-view";
@@ -75,6 +75,7 @@ export function EditorShell() {
   const [progressMessage, setProgressMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [hasCopied, setHasCopied] = useState(false);
   const wordCount = useMemo(() => getWordCount(draft), [draft]);
 
   useEffect(() => {
@@ -94,6 +95,7 @@ export function EditorShell() {
     setScoreBreakdown(null);
     setProgressMessage(null);
     setError(null);
+    setHasCopied(false);
 
     try {
       posthog.capture("rewrite_started", { mode, words_used: wordCount });
@@ -148,6 +150,7 @@ export function EditorShell() {
 
   function applyRewriteResult(payload: RewriteDonePayload) {
     setOutput(payload.rewritten_text);
+    setHasCopied(false);
     setScore(payload.naturalness_score);
     setAttempts(payload.attempts);
     setPerplexity(payload.perplexity);
@@ -157,6 +160,16 @@ export function EditorShell() {
       words_used: payload.words_used,
       naturalness_score: payload.naturalness_score
     });
+  }
+
+  async function handleCopyOutput() {
+    if (!output) {
+      return;
+    }
+
+    await navigator.clipboard.writeText(output);
+    setHasCopied(true);
+    window.setTimeout(() => setHasCopied(false), 1800);
   }
 
   return (
@@ -211,7 +224,21 @@ export function EditorShell() {
         <div className="flex min-h-[34rem] flex-col gap-4 rounded-xl border bg-card p-4 shadow-sm">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h3 className="font-medium">Improved text</h3>
-            <span className="rounded-md border bg-background px-2.5 py-1 text-xs font-medium text-muted-foreground">Diff view</span>
+            <div className="flex items-center gap-2">
+              <span className="rounded-md border bg-background px-2.5 py-1 text-xs font-medium text-muted-foreground">Diff view</span>
+              {output ? (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={hasCopied ? "default" : "outline"}
+                  className={cn("gap-2 transition-all duration-200", hasCopied && "scale-[1.02] shadow-sm")}
+                  onClick={handleCopyOutput}
+                >
+                  {hasCopied ? <Check className="h-4 w-4 animate-in zoom-in-50" /> : <Copy className="h-4 w-4" />}
+                  {hasCopied ? "Copied" : "Copy"}
+                </Button>
+              ) : null}
+            </div>
           </div>
 
           {score !== null ? <NaturalnessScoreBadge score={score * 100} /> : null}
