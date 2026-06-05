@@ -2,6 +2,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Inter, Source_Serif_4 } from "next/font/google";
 import { AnalyticsProvider } from "@/components/analytics-provider";
+import { GoogleAnalytics } from "@/components/google-analytics";
 import "./globals.css";
 
 const inter = Inter({
@@ -76,6 +77,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <ClerkProvider>
       <html lang="en" className={`${inter.variable} ${sourceSerif.variable}`}>
         <body>
+          <GoogleAnalytics />
           <AnalyticsProvider>{children}</AnalyticsProvider>
         </body>
       </html>
