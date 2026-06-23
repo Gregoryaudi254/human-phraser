@@ -9,6 +9,7 @@ class UserResponse(BaseModel):
     email: str
     plan: str
     balance_words: int = 0
+    free_attempts_remaining: int | None = None
     plan_renews_at: datetime | None = None
     created_at: datetime
 

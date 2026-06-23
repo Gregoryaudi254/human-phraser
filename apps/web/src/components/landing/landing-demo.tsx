@@ -23,6 +23,7 @@ export function LandingDemo({ isSignedIn }: { isSignedIn: boolean }) {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [hasCopied, setHasCopied] = useState(false);
+  const [remainingAttempts, setRemainingAttempts] = useState<number | null>(null);
   const words = useMemo(() => wordCount(text), [text]);
 
   async function runDemo() {
@@ -42,6 +43,9 @@ export function LandingDemo({ isSignedIn }: { isSignedIn: boolean }) {
         throw new Error(payload.detail ?? "Demo rewrite failed.");
       }
       setResult(payload.rewritten_text);
+      if (typeof payload.free_attempts_remaining === "number") {
+        setRemainingAttempts(payload.free_attempts_remaining);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Demo rewrite failed.");
     } finally {
@@ -69,7 +73,7 @@ export function LandingDemo({ isSignedIn }: { isSignedIn: boolean }) {
           </h1>
           <p className="mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">
             Paste up to 200 words from ChatGPT, Gemini, Claude, or your own draft and turn stiff text into clearer,
-            smoother prose. No signup needed for the demo.
+            smoother prose. Get 3 free attempts every day, no signup needed.
           </p>
         </div>
 
@@ -133,7 +137,11 @@ export function LandingDemo({ isSignedIn }: { isSignedIn: boolean }) {
                   <MoveRight className="h-4 w-4" />
                 </Link>
               </Button>
-              <p className="text-sm text-muted-foreground">One free demo per day. Sign up for 200 free words.</p>
+              <p className="text-sm text-muted-foreground">
+                {remainingAttempts === null
+                  ? "3 free attempts per day. Sign up to save your rewrites."
+                  : `${remainingAttempts} free attempt${remainingAttempts === 1 ? "" : "s"} left today.`}
+              </p>
             </div>
           </div>
         </div>

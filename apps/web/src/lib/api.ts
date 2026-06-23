@@ -4,6 +4,7 @@ export type CurrentUser = {
   email: string;
   plan: string;
   balance_words: number;
+  free_attempts_remaining: number | null;
   plan_renews_at: string | null;
   created_at: string;
 };

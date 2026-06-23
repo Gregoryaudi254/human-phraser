@@ -26,6 +26,7 @@ type RewriteDonePayload = {
   words_used: number;
   perplexity: number | null;
   score_breakdown: ScoreBreakdown | null;
+  free_attempts_remaining?: number | null;
 };
 
 type RewriteJobResponse =

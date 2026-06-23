@@ -122,7 +122,7 @@ export default function AccountPage() {
               <div className="grid gap-4 lg:grid-cols-3">
                 <PlanCard
                   title="Pro"
-                  price="$14/month"
+                  price="$5/month"
                   body="15,000 words each month for regular rewriting work."
                   action="Upgrade"
                   loading={pendingAction === "pro"}
@@ -130,7 +130,7 @@ export default function AccountPage() {
                 />
                 <PlanCard
                   title="Unlimited"
-                  price="$39/month"
+                  price="$20/month"
                   body="Unlimited rewriting for heavier workflows."
                   action="Upgrade"
                   loading={pendingAction === "unlimited"}
@@ -138,7 +138,7 @@ export default function AccountPage() {
                 />
                 <PlanCard
                   title="Credit pack"
-                  price="$5"
+                  price="$2"
                   body="Add 5,000 extra words without changing plans."
                   action="Buy credits"
                   loading={pendingAction === "credits"}

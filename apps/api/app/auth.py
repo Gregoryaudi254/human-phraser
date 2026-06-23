@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 from app.config import settings
 from app.credits import ensure_credit_account
 from app.database import get_db
+from app.free_usage import is_unlimited_email
 from app.models import User
 
 
@@ -115,16 +116,20 @@ def get_current_user(
     db: Annotated[Session, Depends(get_db)],
 ) -> User:
     email = claims.email_from_claims or _fetch_clerk_email(claims.clerk_user_id)
+    should_be_unlimited = is_unlimited_email(email)
     user = db.scalar(select(User).where(User.clerk_user_id == claims.clerk_user_id))
     if user:
         if user.email != email:
             user.email = email
+        if should_be_unlimited and user.plan != "unlimited":
+            user.plan = "unlimited"
+        if db.is_modified(user):
             db.commit()
             db.refresh(user)
         ensure_credit_account(db, user)
         return user
 
-    user = User(clerk_user_id=claims.clerk_user_id, email=email)
+    user = User(clerk_user_id=claims.clerk_user_id, email=email, plan="unlimited" if should_be_unlimited else "free")
     db.add(user)
     db.commit()
     db.refresh(user)

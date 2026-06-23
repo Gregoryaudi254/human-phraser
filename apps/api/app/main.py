@@ -14,6 +14,7 @@ from app.config import settings
 from app.credits import get_balance
 from app.database import engine, get_db
 from app.demo_routes import router as demo_router
+from app.free_usage import remaining_daily_attempts, signed_identity
 from app.history_routes import router as history_router
 from app.models import User
 from app.observability import init_sentry
@@ -66,5 +67,8 @@ def read_current_user(
         "plan": current_user.plan,
         "plan_renews_at": current_user.plan_renews_at,
         "balance_words": get_balance(db, current_user),
+        "free_attempts_remaining": None
+        if current_user.plan == "unlimited"
+        else remaining_daily_attempts(signed_identity(current_user.clerk_user_id)),
         "created_at": current_user.created_at,
     }

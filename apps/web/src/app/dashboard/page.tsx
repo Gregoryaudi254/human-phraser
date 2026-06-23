@@ -91,7 +91,11 @@ export default function DashboardPage() {
               ) : (
                 <>
                   <span className="block text-foreground">{user?.fullName ?? profile?.email}</span>
-                  <span>{profile?.balance_words.toLocaleString()} words left</span>
+                  <span>
+                    {profile?.plan === "unlimited"
+                      ? "Unlimited usage"
+                      : `${profile?.free_attempts_remaining ?? 0} free attempt${profile?.free_attempts_remaining === 1 ? "" : "s"} today`}
+                  </span>
                 </>
               )}
             </div>

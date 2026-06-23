@@ -18,7 +18,7 @@ const plans = [
   },
   {
     name: "Pro",
-    price: "$14",
+    price: "$5",
     period: "/month",
     description: "For regular writers who publish every week.",
     features: ["15,000 words / month", "Standard & Deep modes", "Naturalness scoring"],
@@ -28,7 +28,7 @@ const plans = [
   },
   {
     name: "Unlimited",
-    price: "$39",
+    price: "$20",
     period: "/month",
     description: "Heavy workflows without watching the meter.",
     features: ["Unlimited rewrites", "Priority processing", "All rewrite depths"],

@@ -29,9 +29,9 @@ class Settings(BaseSettings):
     flutterwave_webhook_secret_hash: str | None = None
     flutterwave_base_url: str = "https://api.flutterwave.com/v3"
     flutterwave_currency: str = "USD"
-    flutterwave_pro_amount: Decimal = Decimal("14")
-    flutterwave_unlimited_amount: Decimal = Decimal("39")
-    flutterwave_credit_pack_amount: Decimal = Decimal("5")
+    flutterwave_pro_amount: Decimal = Decimal("5")
+    flutterwave_unlimited_amount: Decimal = Decimal("20")
+    flutterwave_credit_pack_amount: Decimal = Decimal("2")
     flutterwave_redirect_url: str = "http://localhost:3000/account?checkout=complete"
     sentry_dsn: str | None = None
     sentry_traces_sample_rate: float = 0.1
@@ -39,6 +39,7 @@ class Settings(BaseSettings):
     posthog_host: str = "https://us.i.posthog.com"
     rewrite_rate_limit: str = "10/minute"
     enable_perplexity_scoring: bool = False
+    unlimited_access_emails: str = ""
     stripe_secret_key: str | None = None
     stripe_webhook_secret: str | None = None
     stripe_pro_price_id: str | None = None
